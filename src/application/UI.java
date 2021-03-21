@@ -28,9 +28,12 @@ public class UI {
 	 * ANSI_WHITE_BACKGROUND = "\u001B[47m";
 	 * 
 	 */
+	
+	
 	public static void clearScreen() {
 		 System.out.print("\033[H\033[2J");
 		 System.out.flush();
+		 //Codigo acima é para limpar o console a cada movimento de peça
 	} 
 
 	public static ChessPosition readChessPosition(Scanner sc) {

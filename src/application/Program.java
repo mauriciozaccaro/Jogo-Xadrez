@@ -1,7 +1,9 @@
 package application;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import chess.ChessException;
 import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -10,12 +12,14 @@ public class Program {
 
 	public static void main(String[] args) {
 		
+		
 		Scanner sc = new Scanner(System.in);
 		ChessMatch chessMatch = new ChessMatch();
 		
 		while(true) {
 			
-			//UI.clearScreen();
+			try {
+			//UI.clearScreen();  // serve para limpar o Console, mas fica bugando quando executa no proprio Eclipse
 			UI.printBoard(chessMatch.getPieces());
 			System.out.println();
 			System.out.print("Source: ");
@@ -26,7 +30,15 @@ public class Program {
 			ChessPosition target = UI.readChessPosition(sc);
 			
 			ChessPiece capturePiece = chessMatch.performChessMove(source, target);
-		
+			}
+			catch(ChessException e ) {
+				System.out.println(e.getMessage());
+				sc.nextLine();
+			}
+			catch(InputMismatchException e ) {
+				System.out.println(e.getMessage());
+				sc.nextLine();
+			}
 		}
 	}
 
