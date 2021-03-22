@@ -11,19 +11,21 @@ import chess.ChessPosition;
 public class Program {
 
 	public static void main(String[] args) {
-		
-		
 		Scanner sc = new Scanner(System.in);
 		ChessMatch chessMatch = new ChessMatch();
 		
 		while(true) {
 			
 			try {
-			//UI.clearScreen();  // serve para limpar o Console, mas fica bugando quando executa no proprio Eclipse
+			UI.clearScreen();  // serve para limpar o Console, mas fica bugando quando executa no proprio Eclipse
 			UI.printBoard(chessMatch.getPieces());
 			System.out.println();
 			System.out.print("Source: ");
 			ChessPosition source = UI.readChessPosition(sc);
+			
+			UI.clearScreen();
+			boolean[][] possibleMoves = chessMatch.possibleMoves(source);
+			UI.printBoard(chessMatch.getPieces(), possibleMoves);
 			
 			System.out.println();
 			System.out.print("Target: ");
