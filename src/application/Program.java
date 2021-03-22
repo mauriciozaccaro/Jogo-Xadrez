@@ -18,7 +18,7 @@ public class Program {
 			
 			try {
 			UI.clearScreen();  // serve para limpar o Console, mas fica bugando quando executa no proprio Eclipse
-			UI.printBoard(chessMatch.getPieces());
+			UI.printMatch(chessMatch);
 			System.out.println();
 			System.out.print("Source: ");
 			ChessPosition source = UI.readChessPosition(sc);
