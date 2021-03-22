@@ -1,5 +1,8 @@
  package chess;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
@@ -11,6 +14,9 @@ public class ChessMatch {
 	private Board board;
 	private int turn;
 	private Color currentPlayer;
+	
+	private List<Piece> piecesOnTheBoard = new ArrayList<>();
+	private List<Piece> capturedPieces = new ArrayList<>();
 	
 	public ChessMatch() {
 		board = new Board(8, 8);
@@ -46,29 +52,28 @@ public class ChessMatch {
 	
 	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
 		// convertendo sourcePosition e targetPosition em posição da Matriz
-		
 		Position source = sourcePosition.toPosition();
 		Position target = targetPosition.toPosition();
-		
 		validadeSourcePosition(source); // valida se existia uma peça na posição de origem
 		validadeTargetPosition(source, target); // valida se existe uma peça na posição de destino
-		
 		Piece capturedPiece = makeMove(source, target);
 		nextTurn();
-		
 		return (ChessPiece) capturedPiece; // downcasting  de Piece para ChessPiece
-		
 	}
 	
 	public Piece makeMove(Position source, Position target) {
 		Piece p = board.removePiece(source); // retira a peça de origem
 		Piece capturedPiece = board.removePiece(target); // retira a peça capturada
-		
 		board.placePiece(p, target);
+		
+		if(capturedPiece != null) {
+			piecesOnTheBoard.remove(capturedPiece);
+			capturedPieces.add(capturedPiece);
+		}
+			
 		return capturedPiece;
 	}
 	private void validadeSourcePosition(Position position) {
-		
 		if(!board.theresIsAPiece(position)) {
 			throw new ChessException("Não existe peça na posição de origem!");
 		}
@@ -97,6 +102,7 @@ public class ChessMatch {
 	
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
 		 board.placePiece(piece, new ChessPosition(column, row).toPosition());
+		 piecesOnTheBoard.add(piece);
 	}
 	
 	private void initialSetup() {
