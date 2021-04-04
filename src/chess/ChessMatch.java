@@ -79,8 +79,12 @@ public class ChessMatch {
 		/* a Linha acima testa se o oponent do currentPlayer ficou em check após a jogada
 		 se tiver ficado ele coloca o "check" como true, senão deixa como false */
 		 
-		
-		nextTurn();
+		if(testCheckMate(opponent(currentPlayer))) { // se o oponente do players atual estiver em check mate
+			checkMate = true;
+		}
+		else {
+			nextTurn();
+		}			
 		return (ChessPiece) capturedPiece; // downcasting  de Piece para ChessPiece
 	}
 	
@@ -181,8 +185,7 @@ public class ChessMatch {
 						undoMove(source, target, capturedPiece);
 						if(!testCheck) { // se não estava em check
 							return false;
-						}
-						
+						} 
 					}
 				}
 			}
