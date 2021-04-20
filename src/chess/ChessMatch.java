@@ -1,5 +1,6 @@
  package chess;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ public class ChessMatch {
 	private boolean check;
 	private boolean checkMate;
 	private ChessPiece enPassantValverable;
+	private ChessPiece promoted;
 	
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -52,6 +54,10 @@ public class ChessMatch {
 	
 	public ChessPiece getEnPassantValverable() {
 		return enPassantValverable;
+	}
+	
+	public ChessPiece getPromoted() {
+		return promoted;
 	}
 	
 	public ChessPiece[][] getPieces(){
@@ -86,6 +92,16 @@ public class ChessMatch {
 		
 		ChessPiece movedPiece = (ChessPiece)board.piece(target); // aqui é para usar no enPassantVulnerable   para ver se a peça ficou vulneravel para tomar a jogada "en Passant"
 		
+		//#SpecialMove promoted
+		promoted = null;
+		if(movedPiece instanceof Panw) { // se a peça movida foi um Peão
+			if(movedPiece.getColor() == Color.WHITE && target.getRow() == 0 ||
+			   movedPiece.getColor() == Color.BLACK && target.getRow() == 7) {
+				promoted = (ChessPiece)board.piece(target);
+				promoted = replacePromotedPiece("Q");
+			}
+		}
+		
 		check = (testCheck(opponent(currentPlayer))) ? true : false;
 		/* a Linha acima testa se o oponent do currentPlayer ficou em check após a jogada
 		 se tiver ficado ele coloca o "check" como true, senão deixa como false */
@@ -107,6 +123,33 @@ public class ChessMatch {
 		
 		
 		return (ChessPiece) capturedPiece; // downcasting  de Piece para ChessPiece
+	}
+	
+	public ChessPiece replacePromotedPiece(String type) {
+		if(promoted == null) {
+			throw new IllegalStateException("Não há peça para ser promovida!");
+		}
+		if(!type.equals("B") && !type.equals("N") && !type.equals("R") && !type.equals("Q")) {
+			//throw new InvalidParameterException("Tipo inválido para Promoção!!");
+			return promoted;
+		}
+		
+		Position pos = promoted.getChessPosition().toPosition();
+		Piece p = board.removePiece(pos);
+		piecesOnTheBoard.remove(p);
+		
+		ChessPiece newPiece = newPiece(type, promoted.getColor());
+		board.placePiece(newPiece, pos); // colocando a "nova peça" no lugar da peça promovida (pos)
+		piecesOnTheBoard.add(newPiece);
+		
+		return newPiece;
+	}
+	
+	public ChessPiece newPiece(String type, Color color) {
+		if(type.equals("B")) return new Bishop(board, color);
+		if(type.equals("N")) return new Knight(board, color);
+		if(type.equals("Q")) return new Queen(board, color);
+		return new Rook(board, color);
 	}
 	
 	public Piece makeMove(Position source, Position target) {
@@ -307,7 +350,7 @@ public class ChessMatch {
         placeNewPiece('d', 2, new Panw(board, Color.WHITE, this));
         placeNewPiece('e', 2, new Panw(board, Color.WHITE, this));
         placeNewPiece('f', 2, new Panw(board, Color.WHITE, this));
-        placeNewPiece('g', 2, new Panw(board, Color.WHITE, this));
+        placeNewPiece('g', 6, new Panw(board, Color.WHITE, this)); //mexi nesse era G2
         placeNewPiece('h', 2, new Panw(board, Color.WHITE, this));
         
 		placeNewPiece('a', 8, new Rook(board, Color.BLACK));
